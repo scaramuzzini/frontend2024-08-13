@@ -14,6 +14,8 @@ function StarlinkList() {
     const [starlinks, setStarlinks] = useState([]);
     const [page,setPage] = useState(1);
     const [hasNextPage, setHasNextPage] = useState(true);
+    const [textButton, setTextButton] = useState("Carregar mais");
+
 
     const fetchStarlinks = async (page) => {
 
@@ -35,6 +37,8 @@ function StarlinkList() {
             const nextPage = page + 1;
             setPage(nextPage);
             fetchStarlinks(nextPage);
+        } else {
+            setTextButton('Você chegou na última página');
         }
     };
 
@@ -65,7 +69,7 @@ function StarlinkList() {
 
             <div style={{textAlign: 'center', margin:'20px 0'}}>
                 <button onClick={loadMore}>
-                    Carregar Mais
+                    {textButton}
                 </button>
             </div>
         </>
