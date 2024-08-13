@@ -12,23 +12,34 @@ const satIcon = new L.Icon({
 function StarlinkList() {
 
     const [starlinks, setStarlinks] = useState([]);
+    const [page,setPage] = useState(1);
+    const [hasNextPage, setHasNextPage] = useState(true);
 
-    const fetchStartlinks = async () => {
+    const fetchStarlinks = async (page) => {
 
         try {
             const response = await axios.post('https://api.spacexdata.com/v4/starlink/query', {
                 "query": {},
-                "options": { limit: 100 }
+                "options": { page: page, limit: 100 }
             });
             console.log(response.data);
             setStarlinks(response.data.docs);
+		    setHasNextPage(response.data.hasNextPage);
         } catch (error) {
             console.log('Erro ao obter os dados...');
         }
     }
 
+    const loadMore = () => {
+        if (hasNextPage) {
+            const nextPage = page + 1;
+            setPage(nextPage);
+            fetchStarlinks(nextPage);
+        }
+    };
+
     useEffect(() => {
-        fetchStartlinks();
+        fetchStarlinks(page);
     }, []);
 
 
@@ -51,6 +62,12 @@ function StarlinkList() {
                 }
                 
             </MapContainer>
+
+            <div style={{textAlign: 'center', margin:'20px 0'}}>
+                <button onClick={loadMore}>
+                    Carregar Mais
+                </button>
+            </div>
         </>
     );
 }
